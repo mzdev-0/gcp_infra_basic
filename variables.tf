@@ -3,15 +3,15 @@ variable "project_id" {
   description = "The ID of the project."
 }
 
-variable "region" {
-  type        = string
-  description = "The region to deploy resources in."
-  default     = "us-central1"
+variable "is_regional" {
+  type        = bool
+  description = "Regional or Zonal Cluster"
+  default     = false
 }
 
 variable "zone" {
   type        = string
-  description = "The zone to deploy GKE in."
+  description = "The zone to provision GKE in."
   default     = "us-central1-a"
 }
 
@@ -24,6 +24,12 @@ variable "cluster_name" {
   type        = string
   description = "The name of the cluster"
   default     = "my-cluster"
+}
+
+variable "region" {
+  type        = string
+  description = "The Region"
+  default     = "us-central1"
 }
 
 variable "machine_type" {
