@@ -22,7 +22,6 @@ module "gke" {
       machine_type = var.machine_type
       min_count    = var.min_nodes
       max_count    = var.max_nodes
-      preemptible  = false
       disk_size_gb = var.disk_size_gb
       disk_type    = "pd-standard"
       image_type   = "COS_CONTAINERD"
