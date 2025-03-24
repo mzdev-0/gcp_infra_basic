@@ -2,19 +2,19 @@ module "gke" {
   source  = "terraform-google-modules/kubernetes-engine/google"
   version = "~> 29.0"
 
-  project_id          = var.project_id
-  name                = var.cluster_name
-  region              = var.region
-  zones               = [var.zone]
-  deletion_protection = false
-  # network and subnetwork must preexist before you call the kubernetes-engine module
-  network    = module.vpc.network_name
-  subnetwork = module.vpc.subnets_names[0]
+  #Required
+  project_id        = var.project_id
+  name              = var.cluster_name
+  network           = module.vpc.network_name
+  subnetwork        = module.vpc.subnets_names[0]
+  ip_range_pods     = "k8s-pod-range"
+  ip_range_services = "k8s-service-range"
 
-  ip_range_pods            = "k8s-pod-range"
-  ip_range_services        = "k8s-service-range"
+  #Optional
+  zones                    = [var.zone]
+  regional                 = var.is_regional
+  deletion_protection      = false
   remove_default_node_pool = true
-  initial_node_count       = 1
 
   node_pools = [
     {
