@@ -2,10 +2,11 @@ module "gke" {
   source  = "terraform-google-modules/kubernetes-engine/google"
   version = "~> 29.0"
 
-  project_id = var.project_id
-  name       = var.cluster_name
-  region     = var.region
-  zones      = [var.zone]
+  project_id          = var.project_id
+  name                = var.cluster_name
+  region              = var.region
+  zones               = [var.zone]
+  deletion_protection = false
   # network and subnetwork must preexist before you call the kubernetes-engine module
   network    = module.vpc.network_name
   subnetwork = module.vpc.subnets_names[0]
