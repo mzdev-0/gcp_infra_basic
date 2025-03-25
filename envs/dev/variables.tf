@@ -78,26 +78,41 @@ variable "subnet_ip" {
   default     = "10.10.10.0/24"
 }
 
-variable "k8s_pod_range" {
+variable "k8s-pod-range" {
   type        = string
   description = "The IP range of the cluster pods"
   default     = "192.168.0.0/18"
 }
 
-variable "k8s_svc_range" {
+variable "k8s-svc-range" {
   type        = string
   description = "the IP range of the cluster services"
   default     = "192.168.64.0/18"
 }
-variable "k8s_pod_range_name" {
+variable "k8s-pod-range-name" {
   type        = string
   description = "The name of the IP range for the cluster pods"
   default     = "k8s-pod-range"
 }
 
-variable "k8s_svc_range_name" {
+variable "k8s-svc-range-name" {
   type        = string
   description = "The name of the IP range for the cluster services"
   default     = "k8s-svc-range"
 }
 
+variable "namespace" {
+  type    = string
+  default = "traefik"
+}
+
+variable "chart_version" {
+  type    = string
+  default = "26.1.0" # Use a SPECIFIC version!
+}
+
+variable "traefik_values" {
+  type        = any
+  default     = {}
+  description = "Custom values to override in the Traefik Helm chart"
+}

@@ -16,12 +16,12 @@ module "vpc" {
   secondary_ranges = {
     gke-subnet = [
       {
-        range_name    = var.k8s_pod_range_name
-        ip_cidr_range = var.k8s_pod_range
+        range_name    = var.k8s-pod-range-name
+        ip_cidr_range = var.k8s-pod-range
       },
       {
-        range_name    = var.k8s_svc_range_name
-        ip_cidr_range = var.k8s_svc_range
+        range_name    = var.k8s-svc-range-name
+        ip_cidr_range = var.k8s-svc-range
       }
     ]
   }
@@ -32,10 +32,10 @@ module "gke" {
   version                  = "~> 29.0"
   project_id               = var.project_id
   name                     = var.cluster_name
-  network                  = var.network_name
+  network                  = module.vpc.network_name
   subnetwork               = var.subnet_name
-  ip_range_pods            = var.k8s_pod_range_name
-  ip_range_services        = var.k8s_svc_range_name
+  ip_range_pods            = var.k8s-pod-range-name
+  ip_range_services        = var.k8s-svc-range-name
   zones                    = [var.zone]
   regional                 = var.is_regional
   deletion_protection      = false
@@ -53,4 +53,75 @@ module "gke" {
     }
   ]
 
+}
+
+resource "kubernetes_namespace" "traefik" {
+  metadata {
+    name = var.namespace
+  }
+}
+
+resource "helm_release" "traefik" {
+  depends_on = [
+    kubernetes_namespace.traefik
+  ]
+  name       = "traefik"
+  repository = "https://helm.traefik.io/traefik"
+  chart      = "traefik"
+  namespace  = "traefik"
+  version    = var.chart_version
+
+  #  # Use the values.yaml file, and allow for overrides.
+  #  values = [
+  #    yamlencode(merge(
+  #      yamldecode(file("${path.module}/values.yaml")),
+  #      var.traefik_values
+  #    ))
+  #  ]
+
+  set {
+    name  = "ingressClass.enabled"
+    value = "true"
+  }
+  set {
+    name  = "ingressClass.isDefaultClass"
+    value = "true"
+  }
+}
+
+#module "traefik" {
+#  source        = "./traefik"
+#  chart_version = "34.4.1" # ALWAYS specify a version
+#  traefik_values = {       #Any additional helm value overrides can go here, or be specified in the values.yaml
+#    #  key = "value"
+#  }
+#}
+
+resource "kubernetes_namespace" "certmanager" {
+  metadata {
+    name = "certmanager"
+  }
+}
+
+resource "helm_release" "certmanager" {
+  depends_on = [
+    kubernetes_namespace.certmanager
+  ]
+  name      = "certmanager"
+  namespace = "certmanager"
+
+  repository = "https://charts.jetstack.io"
+  chart      = "cert-manager"
+
+  set {
+    name  = "installCRDs"
+    value = "true"
+  }
+}
+
+resource "time_sleep" "wait_for_certmanager" {
+  depends_on = [
+    helm_release.certmanager
+  ]
+  create_duration = "10s"
 }
