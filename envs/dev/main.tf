@@ -125,3 +125,18 @@ resource "time_sleep" "wait_for_certmanager" {
   ]
   create_duration = "10s"
 }
+
+resource "kubernetes_namespace" "argocd" {
+  metadata {
+    name = "argocd"
+  }
+}
+
+resource "helm_release" "argocd" {
+  depends_on = [kubernetes_namespace.argocd]
+  name       = "argocd"
+  namespace  = "argocd"
+
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+}
