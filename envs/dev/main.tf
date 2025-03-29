@@ -91,8 +91,8 @@ resource "helm_release" "traefik" {
 
 #module "traefik" {
 #  source        = "./traefik"
-#  chart_version = "34.4.1" # ALWAYS specify a version
-#  traefik_values = {       #Any additional helm value overrides can go here, or be specified in the values.yaml
+#  chart_version = "34.4.1" 
+#  traefik_values = {       
 #    #  key = "value"
 #  }
 #}
