@@ -38,3 +38,4 @@ terraform.rc
 .envrc
 cluster-cert
 .terraform.lock.hcl
+.ca_cert
